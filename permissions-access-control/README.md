@@ -187,3 +187,18 @@ Only run the cleanup command after confirming that `/tmp/permissions-lab` is the
 ## Key Takeaways
 
 This lab covers Linux permission notation, `chmod`, directory access, `umask`, and the sticky bit. These concepts are important for managing files securely and understanding access control in Linux systems.
+
+
+## Test Results
+
+Tested on Ubuntu Linux using Bash.
+
+The script successfully demonstrated:
+
+- Changing permissions with `chmod 600` and `chmod 754`.
+- Displaying permissions with `ls -l`.
+- Checking the current `umask`.
+- Adding group read permission.
+- Setting the sticky bit on a temporary directory.
+
+All commands completed successfully.
