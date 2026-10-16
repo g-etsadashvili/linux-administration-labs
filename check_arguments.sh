@@ -6,6 +6,7 @@ then
     # Runs when there are exactly two arguments
     echo "Correct number of arguments"
 else
-    # Runs when the number of arguments is not two
+    # Explain the expected usage
     echo "Incorrect number of arguments"
+    echo "Usage: $0 <arg1> <arg2>"
 fi
