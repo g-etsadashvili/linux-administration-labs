@@ -2,19 +2,32 @@
 
 ## Overview
 
-This project documents a practical NFS setup between an Ubuntu virtual machine and a Raspberry Pi 3B+. The Ubuntu VM acts as the NFS server, and the Raspberry Pi acts as the client.
+This project documents a practical Network File System (NFS) lab between an Ubuntu virtual machine and a Raspberry Pi 3B+.
 
-The goal was to share a directory over the network, mount it on the client, and verify that files created through the client are accessible on the server.
+The Ubuntu VM acts as the NFS server, while the Raspberry Pi acts as the client. The objective is to share a directory over the network, mount it on the client, and verify that a file created through the client is accessible on the server.
 
 ## Environment
 
-- **Server:** Ubuntu VM
+- **Server:** Ubuntu virtual machine
 - **Client:** Raspberry Pi 3B+
 - **Protocol:** NFS
-- **Server software:** `nfs-kernel-server`
-- **Client software:** `nfs-common`
+- **Server package:** `nfs-kernel-server`
+- **Client package:** `nfs-common`
 
-## 1. Server — Ubuntu VM
+## Lab Script
+
+**File:** `nfs_lab.sh`
+
+The script documents the commands used in this lab, separated into server and client sections.
+
+- The server section covers installing NFS, creating the shared directory, configuring the export, restarting the service, and checking the exported directory.
+- The client section documents installing NFS client tools, creating the mount point, mounting the shared directory, and testing file access.
+
+The client commands are commented out because they must be executed on the Raspberry Pi, not on the Ubuntu server. Editing `/etc/exports` also requires manual configuration.
+
+The script is intended as a reference for the lab procedure rather than a fully automated setup.
+
+## 1. Server Configuration — Ubuntu VM
 
 ### Install the NFS server
 
@@ -25,16 +38,16 @@ sudo apt install nfs-kernel-server
 ### Create the shared directory
 
 ```bash
-mkdir -p ~/my_share
+mkdir ~/my_share
 ```
 
 The directory used in the lab was:
 
 `/home/ubuntu-pc/my_share`
 
-### Configure the export
+### Configure the NFS export
 
-Edit the exports configuration:
+Open the exports configuration file:
 
 ```bash
 sudo nano /etc/exports
@@ -46,19 +59,37 @@ The lab used this export entry:
 /home/ubuntu-pc/my_share *(rw,sync,no_subtree_check)
 ```
 
-This configuration permits read/write access for matching clients. The wildcard was used in the learning environment; production configurations should restrict access to trusted client addresses.
+This configuration allows matching clients to access the exported directory with read/write permissions. The wildcard permits access from any client that can reach the server and should only be used in a controlled learning environment.
 
 ### Restart and verify the service
 
+Restart the NFS server:
+
 ```bash
 sudo systemctl restart nfs-kernel-server
-sudo exportfs -v
-sudo systemctl status nfs-kernel-server
 ```
 
-## 2. Client — Raspberry Pi 3B+
+Display the exported directories:
 
-### Install the client tools
+```bash
+sudo exportfs -v
+```
+
+Check the service status:
+
+```bash
+systemctl status nfs-kernel-server
+```
+
+Inspect the shared directory:
+
+```bash
+ls -l ~/my_share/
+```
+
+## 2. Client Configuration — Raspberry Pi 3B+
+
+### Update packages and install the NFS client
 
 ```bash
 sudo apt update
@@ -73,7 +104,7 @@ sudo mkdir -p /mnt/my_share
 
 ### Mount the shared directory
 
-Replace `<NFS_SERVER_IP>` with the current IP address of the Ubuntu VM.
+Replace `<NFS_SERVER_IP>` with the current IP address of the Ubuntu VM:
 
 ```bash
 sudo mount -t nfs <NFS_SERVER_IP>:/home/ubuntu-pc/my_share /mnt/my_share
@@ -93,17 +124,17 @@ Create a test file from the Raspberry Pi client:
 touch /mnt/my_share/test_nfs.txt
 ```
 
-Then check the shared directory on the Ubuntu server:
+Then, on the Ubuntu server, inspect the shared directory:
 
 ```bash
 ls -l ~/my_share/
 ```
 
-The test file `test_nfs.txt` was visible in the Ubuntu server's shared directory, confirming that the NFS file-sharing test succeeded.
+The file `test_nfs.txt` was visible in the Ubuntu server's shared directory during the lab, confirming that file sharing between the client and server worked.
 
 ## Results
 
-The NFS setup was completed successfully.
+The NFS lab was completed successfully.
 
 - The Ubuntu VM exported a shared directory.
 - The Raspberry Pi mounted the exported directory.
@@ -113,20 +144,27 @@ The NFS setup was completed successfully.
 ## Concepts Practised
 
 - Client-server architecture
-- Installing Linux services
+- Installing Linux packages
 - Configuring `/etc/exports`
 - Managing services with `systemctl`
-- Export verification with `exportfs`
+- Verifying NFS exports with `exportfs`
 - Mounting network filesystems
-- Verifying mounts with `findmnt`
+- Checking mounts with `findmnt`
 - Testing file sharing between Linux systems
 
 ## Security Considerations
 
-The wildcard export used in this lab is suitable only for a controlled learning environment. For real deployments, restrict NFS access to trusted clients and configure permissions appropriately.
+The wildcard export used in this lab is suitable only for a controlled learning environment. In real deployments, restrict the export to trusted client IP addresses and configure file permissions appropriately.
+
+NFS access permissions should be considered together with the underlying Linux filesystem permissions.
 
 ## Future Improvements
 
 - Restrict the export to the Raspberry Pi's IP address.
 - Explore persistent mounts using `/etc/fstab`.
-- Document troubleshooting for network, mount, and permission problems.
+- Add error handling to the lab script.
+- Document troubleshooting for network connectivity, mount failures, and permissions.
+
+## Purpose
+
+This project demonstrates practical Linux administration skills developed during my Linux 1 studies. It documents the NFS configuration, the commands used, and the verification of file sharing between two Linux systems.
