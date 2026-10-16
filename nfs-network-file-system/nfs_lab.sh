@@ -1,11 +1,18 @@
+
+# ============================================================
+# NFS LAB — UBUNTU VM (SERVER) AND RASPBERRY PI (CLIENT)
+#
+# This file contains TWO SEPARATE SCRIPTS.
+# Copy each section into its own file before running it.
+# ============================================================
+
+
+# ============================================================
+# SCRIPT 1: NFS SERVER — UBUNTU VM
+# Save this section as nfs_server.sh
+# ============================================================
+
 #!/bin/bash
-
-# NFS Lab: Ubuntu VM (Server) and Raspberry Pi (Client)
-# Based on the commands used in the lab.
-
-# ==================================================
-# SERVER - UBUNTU VM
-# ==================================================
 
 # 1. Install the NFS server
 sudo apt install nfs-kernel-server
@@ -16,7 +23,7 @@ mkdir -p ~/my_share
 # 3. Configure the NFS export
 sudo nano /etc/exports
 
-# Add this line in /etc/exports:
+# Add this entry in /etc/exports:
 # /home/ubuntu-pc/my_share *(rw,sync,no_subtree_check)
 
 # 4. Restart the NFS service
@@ -28,31 +35,35 @@ sudo exportfs -v
 # 6. Check the NFS service
 systemctl status nfs-kernel-server
 
-# 7. Check files in the shared directory
+# 7. Check the shared directory
 ls -l ~/my_share/
 
 
-# ==================================================
-# CLIENT - RASPBERRY PI
-# ==================================================
+# ============================================================
+# SCRIPT 2: NFS CLIENT — RASPBERRY PI 3B+
+# Save this section as nfs_client.sh
+# ============================================================
 
-# 1. Update package information and install NFS tools
-# Run these commands on the Raspberry Pi:
- sudo apt update
- sudo apt install nfs-common
+#!/bin/bash
 
-# 2. Create the mount point
- sudo mkdir -p /mnt/my_share
+# 1. Update package information
+sudo apt update
 
-# 3. Mount the Ubuntu server's shared directory
-# Replace <UBUNTU_SERVER_IP> with the actual Ubuntu VM IP.
- sudo mount -t nfs <UBUNTU_SERVER_IP>:/home/ubuntu-pc/my_share /mnt/my_share
+# 2. Install NFS client tools
+sudo apt install nfs-common
 
-# 4. Check the mount
-  findmnt /mnt/my_share
+# 3. Create the mount point
+sudo mkdir -p /mnt/my_share
 
-# 5. Create a test file through the client
-  touch /mnt/my_share/test_nfs.txt
+# 4. Mount the Ubuntu server's shared directory
+# Replace <UBUNTU_SERVER_IP> with the Ubuntu VM's actual IP.
+sudo mount -t nfs <UBUNTU_SERVER_IP>:/home/ubuntu-pc/my_share /mnt/my_share
 
-# 6. Verify the file on the Ubuntu server
-  ls -l ~/my_share/
+# 5. Verify the mount
+findmnt /mnt/my_share
+
+# 6. Create a test file through the client
+touch /mnt/my_share/test_nfs.txt
+
+# 7. List the shared files
+ls -l /mnt/my_share/
