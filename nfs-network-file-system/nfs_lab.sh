@@ -38,21 +38,21 @@ ls -l ~/my_share/
 
 # 1. Update package information and install NFS tools
 # Run these commands on the Raspberry Pi:
-# sudo apt update
-# sudo apt install nfs-common
+ sudo apt update
+ sudo apt install nfs-common
 
 # 2. Create the mount point
-# sudo mkdir -p /mnt/my_share
+ sudo mkdir -p /mnt/my_share
 
 # 3. Mount the Ubuntu server's shared directory
 # Replace <UBUNTU_SERVER_IP> with the actual Ubuntu VM IP.
-# sudo mount -t nfs <UBUNTU_SERVER_IP>:/home/ubuntu-pc/my_share /mnt/my_share
+ sudo mount -t nfs <UBUNTU_SERVER_IP>:/home/ubuntu-pc/my_share /mnt/my_share
 
 # 4. Check the mount
-# findmnt /mnt/my_share
+  findmnt /mnt/my_share
 
 # 5. Create a test file through the client
-# touch /mnt/my_share/test_nfs.txt
+  touch /mnt/my_share/test_nfs.txt
 
 # 6. Verify the file on the Ubuntu server
-# ls -l ~/my_share/
+  ls -l ~/my_share/
